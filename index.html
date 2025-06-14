@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Richiesta Assistenza</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ffffff;
+      color: #000000;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #ffffff;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 4px solid #f1c40f;
+    }
+    header img {
+      max-height: 60px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 30px auto;
+      padding: 20px;
+      border: 2px solid #f1c40f;
+      background-color: #f0f0f0;
+      border-radius: 5px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #000000;
+    }
+    input[type="text"], input[type="email"], textarea, select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #d3d3d3;
+      border-radius: 4px;
+      background-color: #f9f9f9;
+    }
+    input[type="email"]:invalid {
+      border-color: red;
+    }
+    textarea {
+      resize: vertical;
+    }
+    button {
+      background-color: #f1c40f;
+      color: #000000;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #d4ac0d;
+    }
+    h2 {
+      color: #f1c40f;
+      text-align: center;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+  <script>
+    function validateForm(event) {
+      const email = document.getElementById("email").value;
+      if (!email.includes("@") || !email.includes(".")) {
+        alert("Inserisci un indirizzo email valido che contenga almeno una '@' e un '.'");
+        event.preventDefault();
+        return false;
+      }
+
+      const fields = ["nome", "identificativo", "email", "paese", "categoria", "telefono", "oggetto", "descrizione"];
+      const categoria = document.getElementById("categoria").value;
+      if (categoria === "Ordini e spedizioni") fields.push("numeroOrdine");
+      if (categoria === "Supporto tecnico prodotto" || categoria === "Supporto tecnico prodotto") fields.push("codiceProdotto");
+	  
+
+      for (let id of fields) {
+        const field = document.getElementById(id);
+        if (!field || field.value.trim() === "") {
+          alert("Tutti i campi sono obbligatori.");
+          event.preventDefault();
+          return false;
+        }
+        if (/[;,]/.test(field.value)) {
+          alert("I campi non possono contenere virgole o punti e virgola.");
+          event.preventDefault();
+          return false;
+        }
+      }
+      return true;
+    }
+
+    function handleCategoriaChange() {
+      const categoria = document.getElementById("categoria").value;
+      document.getElementById("numeroOrdineGroup").classList.add("hidden");
+      document.getElementById("numeroOrdine").required = false;
+      document.getElementById("codiceProdottoGroup").classList.add("hidden");
+      document.getElementById("codiceProdotto").required = false;
+
+      if (categoria === "Ordini e spedizioni") {
+        document.getElementById("numeroOrdineGroup").classList.remove("hidden");
+        document.getElementById("numeroOrdine").required = true;
+      } else if (categoria === "Supporto tecnico prodotto" || categoria === "Supporto tecnico prodotto") {
+        document.getElementById("codiceProdottoGroup").classList.remove("hidden");
+        document.getElementById("codiceProdotto").required = true;
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById("ticketForm").addEventListener("submit", validateForm);
+      document.getElementById("categoria").addEventListener("change", handleCategoriaChange);
+    });
+	
+	document.getElementById("ticketForm").addEventListener("submit", function (event) {
+  event.preventDefault();
+
+  const form = event.target;
+  const data = new FormData(form);
+
+  fetch("https://script.google.com/macros/s/AKfycbxuEE5xjqq_PxJSJWJQ9UgXWtXSkih1g1YBzgEHoOuwnwb6Se6TxKujNRl5qMqGXhdS/exec", {
+    method: "POST",
+    body: data
+  })
+  .then(response => {
+    if (response.ok) {
+      alert("Richiesta inviata con successo.");
+      form.reset();
+      document.getElementById("numeroOrdineGroup").classList.add("hidden");
+      document.getElementById("codiceProdottoGroup").classList.add("hidden");
+    } else {
+      alert("Errore durante l'invio della richiesta.");
+    }
+  })
+  .catch(error => {
+    alert("Errore di rete: " + error.message);
+  });
+});
+
+  </script>
+</head>
+<body>
+
+<header>
+  <img src="logo.png" alt="Logo Azienda">
+</header>
+
+<div class="container">
+  <h2>Richiesta Assistenza</h2>
+  <form id="ticketForm">
+    <div class="form-group">
+      <label for="nome">Nome azienda</label>
+      <input type="text" id="nome" name="nome" required>
+    </div>
+
+    <div class="form-group">
+      <label for="identificativo">Inserire un identificativo tra: Partita IVA, Codice Fiscale o Codice Cliente</label>
+      <input type="text" id="identificativo" name="identificativo" required>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required>
+    </div>
+
+    <div class="form-group">
+      <label for="paese">Paese</label>
+      <select id="paese" name="paese" required>
+        <option value="">-- Seleziona Paese --</option>
+        <option value="IT">IT - Italy</option>
+        <option value="FR">FR - France</option>
+        <option value="RO">RO - Romania</option>
+        <option value="ES">ES - Spain</option>
+        <option value="MT">MT - Malta</option>
+        <option value="EL">EL - Greece</option>
+        <option value="DE">DE - Germany</option>
+        <option value="CZ">CZ - Czech Republic</option>
+        <option value="PT">PT - Portugal</option>
+        <option value="HR">HR - Croatia</option>
+        <option value="GB">GB - United Kingdom</option>
+        <option value="SK">SK - Slovakia</option>
+        <option value="HU">HU - Hungary</option>
+        <option value="SI">SI - Slovenia</option>
+        <option value="SM">SM - San Marino</option>
+        <option value="LT">LT - Lithuania</option>
+        <option value="BE">BE - Belgium</option>
+        <option value="MD">MD - Moldova</option>
+        <option value="IE">IE - Ireland</option>
+        <option value="CY">CY - Cyprus</option>
+        <option value="LV">LV - Latvia</option>
+        <option value="PL">PL - Poland</option>
+        <option value="NL">NL - Netherlands</option>
+        <option value="AL">AL - Albania</option>
+        <option value="MU">MU - Mauritius</option>
+        <option value="CH">CH - Switzerland</option>
+        <option value="BG">BG - Bulgaria</option>
+        <option value="LB">LB - Lebanon</option>
+        <option value="ME">ME - Montenegro</option>
+        <option value="AD">AD - Andorra</option>
+        <option value="AT">AT - Austria</option>
+        <option value="CI">CI - Ivory Coast</option>
+        <option value="CM">CM - Cameroon</option>
+        <option value="JO">JO - Jordan</option>
+        <option value="MA">MA - Morocco</option>
+        <option value="MQ">MQ - Martinique</option>
+        <option value="IL">IL - Israel</option>
+        <option value="GI">GI - Gibraltar</option>
+        <option value="AE">AE - United Arab Emirates</option>
+        <option value="AM">AM - Armenia</option>
+        <option value="SG">SG - Singapore</option>
+        <option value="BO">BO - Bolivia</option>
+        <option value="EE">EE - Estonia</option>
+        <option value="FI">FI - Finland</option>
+        <option value="GA">GA - Gabon</option>
+        <option value="LY">LY - Libya</option>
+        <option value="BA">BA - Bosnia and Herzegovina</option>
+        <option value="QA">QA - Qatar</option>
+        <option value="RS">RS - Serbia</option>
+        <option value="AZ">AZ - Azerbaijan</option>
+        <option value="BF">BF - Burkina Faso</option>
+        <option value="LU">LU - Luxembourg</option>
+        <option value="NO">NO - Norway</option>
+        <option value="RU">RU - Russia</option>
+        <option value="XK">XK - Kosovo</option>
+        <option value="XZ">XZ - Unknown</option>
+        <option value="DK">DK - Denmark</option>
+        <option value="MC">MC - Monaco</option>
+        <option value="NC">NC - New Caledonia</option>
+        <option value="PA">PA - Panama</option>
+        <option value="SE">SE - Sweden</option>
+        <option value="TR">TR - Turkey</option>
+        <option value="OTHER">Other</option>
+      </select>
+    </div>
+	
+	<div class="form-group">
+      <label for="telefono">Telefono</label>
+      <input type="text" id="telefono" name="telefono" required>
+    </div>
+	
+
+    <div class="form-group">
+      <label for="categoria">Categoria</label>
+      <select id="categoria" name="categoria" required>
+        <option value="">-- Seleziona --</option>
+        <option value="Ordini e spedizioni">Ordini e spedizioni</option>
+        <option value="Schede tecniche / certificazioni">Schede tecniche / certificazioni</option>
+        <option value="Contabilità">Contabilità</option>
+        <option value="Pagamenti">Pagamenti</option>
+        <option value="Prezzi e condizioni commerciali">Prezzi e condizioni commerciali</option>
+        <option value="Supporto portale e-commerce">Supporto portale e-commerce</option>
+        <option value="Supporto tecnico prodotto">Supporto tecnico su prodotto</option>
+        <option value="Altro">Altro</option>
+      </select>
+    </div>
+
+
+	<div class="form-group hidden" id="numeroOrdineGroup">
+      <label for="numeroOrdine">Numero ordine</label>
+      <input type="text" id="numeroOrdine" name="numeroOrdine">
+    </div>
+
+    <div class="form-group hidden" id="codiceProdottoGroup">
+      <label for="codiceProdotto">Codice prodotto</label>
+      <input type="text" id="codiceProdotto" name="codiceProdotto">
+    </div>
+
+
+    <div class="form-group">
+      <label for="oggetto">Oggetto</label>
+      <input type="text" id="oggetto" name="oggetto" required>
+    </div>
+
+    <div class="form-group">
+      <label for="descrizione">Descrizione</label>
+      <textarea id="descrizione" name="descrizione" rows="5" required></textarea>
+    </div>
+
+
+    <button type="submit">Invia Richiesta</button>
+  </form>
+</div>
+
+</body>
+</html>
