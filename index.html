@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Richiesta Assistenza</title>
+  <title>Richiesta Assistenza / Help Desk</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -158,19 +158,19 @@
 <body>
 
 <header>
-  <img src="logo.png" alt="Logo Azienda">
+  <img src="https://cdn11.bigcommerce.com/s-xyvbdchgxw/images/stencil/original/image-manager/logo-faneurope-ridim.jpg?t=1714721738" alt="Logo Azienda">
 </header>
 
 <div class="container">
-  <h2>Richiesta Assistenza</h2>
+  <h2>Richiesta Assistenza / Help Desk</h2>
   <form id="ticketForm">
     <div class="form-group">
-      <label for="nome">Nome azienda</label>
+      <label for="nome">Nome azienda / Company Name</label>
       <input type="text" id="nome" name="nome" required>
     </div>
 
     <div class="form-group">
-      <label for="identificativo">Inserire un identificativo tra: Partita IVA, Codice Fiscale o Codice Cliente</label>
+      <label for="identificativo">Inserire un identificativo tra: Partita IVA, Codice Fiscale o Codice Cliente / Enter an ID among: VAT Number, Tax Code or Customer Code</label>
       <input type="text" id="identificativo" name="identificativo" required>
     </div>
 
@@ -180,9 +180,9 @@
     </div>
 
     <div class="form-group">
-      <label for="paese">Paese</label>
+      <label for="paese">Paese / Country</label>
       <select id="paese" name="paese" required>
-        <option value="">-- Seleziona Paese --</option>
+        <option value="">-- Seleziona Paese / Select Country--</option>
         <option value="IT">IT - Italy</option>
         <option value="FR">FR - France</option>
         <option value="RO">RO - Romania</option>
@@ -250,15 +250,15 @@
     </div>
 	
 	<div class="form-group">
-      <label for="telefono">Telefono</label>
+      <label for="telefono">Telefono / Phone</label>
       <input type="text" id="telefono" name="telefono" required>
     </div>
 	
 
     <div class="form-group">
-      <label for="categoria">Categoria</label>
+      <label for="categoria">Categoria / Category</label>
       <select id="categoria" name="categoria" required>
-        <option value="">-- Seleziona --</option>
+        <option value="">-- Seleziona / Select --</option>
         <option value="Ordini e spedizioni">Ordini e spedizioni</option>
         <option value="Schede tecniche / certificazioni">Schede tecniche / certificazioni</option>
         <option value="Contabilità">Contabilità</option>
@@ -272,28 +272,28 @@
 
 
 	<div class="form-group hidden" id="numeroOrdineGroup">
-      <label for="numeroOrdine">Numero ordine</label>
+      <label for="numeroOrdine">Numero ordine / Order Number</label>
       <input type="text" id="numeroOrdine" name="numeroOrdine">
     </div>
 
     <div class="form-group hidden" id="codiceProdottoGroup">
-      <label for="codiceProdotto">Codice prodotto</label>
+      <label for="codiceProdotto">Codice prodotto / SKU</label>
       <input type="text" id="codiceProdotto" name="codiceProdotto">
     </div>
 
 
     <div class="form-group">
-      <label for="oggetto">Oggetto</label>
+      <label for="oggetto">Oggetto / Subject</label>
       <input type="text" id="oggetto" name="oggetto" required>
     </div>
 
     <div class="form-group">
-      <label for="descrizione">Descrizione</label>
+      <label for="descrizione">Descrizione / Content</label>
       <textarea id="descrizione" name="descrizione" rows="5" required></textarea>
     </div>
 
 
-    <button type="submit">Invia Richiesta</button>
+    <button type="submit">Invia Richiesta / Send Request</button>
   </form>
 </div>
 
