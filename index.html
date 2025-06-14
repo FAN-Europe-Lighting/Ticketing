@@ -74,83 +74,86 @@
     }
   </style>
   <script>
-    function validateForm(event) {
-      const email = document.getElementById("email").value;
-      if (!email.includes("@") || !email.includes(".")) {
-        alert("Inserisci un indirizzo email valido che contenga almeno una '@' e un '.'");
+  function validateForm(event) {
+    const email = document.getElementById("email").value;
+    if (!email.includes("@") || !email.includes(".")) {
+      alert("Inserisci un indirizzo email valido che contenga almeno una '@' e un '.'");
+      event.preventDefault();
+      return false;
+    }
+
+    const fields = ["nome", "identificativo", "email", "paese", "categoria", "telefono", "oggetto", "descrizione"];
+    const categoria = document.getElementById("categoria").value;
+    if (categoria === "Ordini e spedizioni") fields.push("numeroOrdine");
+    if (categoria === "Supporto tecnico prodotto") fields.push("codiceProdotto");
+
+    for (let id of fields) {
+      const field = document.getElementById(id);
+      if (!field || field.value.trim() === "") {
+        alert("Tutti i campi sono obbligatori.");
         event.preventDefault();
         return false;
       }
-
-      const fields = ["nome", "identificativo", "email", "paese", "categoria", "telefono", "oggetto", "descrizione"];
-      const categoria = document.getElementById("categoria").value;
-      if (categoria === "Ordini e spedizioni") fields.push("numeroOrdine");
-      if (categoria === "Supporto tecnico prodotto" || categoria === "Supporto tecnico prodotto") fields.push("codiceProdotto");
-	  
-
-      for (let id of fields) {
-        const field = document.getElementById(id);
-        if (!field || field.value.trim() === "") {
-          alert("Tutti i campi sono obbligatori.");
-          event.preventDefault();
-          return false;
-        }
-        if (/[;,]/.test(field.value)) {
-          alert("I campi non possono contenere virgole o punti e virgola.");
-          event.preventDefault();
-          return false;
-        }
-      }
-      return true;
-    }
-
-    function handleCategoriaChange() {
-      const categoria = document.getElementById("categoria").value;
-      document.getElementById("numeroOrdineGroup").classList.add("hidden");
-      document.getElementById("numeroOrdine").required = false;
-      document.getElementById("codiceProdottoGroup").classList.add("hidden");
-      document.getElementById("codiceProdotto").required = false;
-
-      if (categoria === "Ordini e spedizioni") {
-        document.getElementById("numeroOrdineGroup").classList.remove("hidden");
-        document.getElementById("numeroOrdine").required = true;
-      } else if (categoria === "Supporto tecnico prodotto" || categoria === "Supporto tecnico prodotto") {
-        document.getElementById("codiceProdottoGroup").classList.remove("hidden");
-        document.getElementById("codiceProdotto").required = true;
+      if (/[;,]/.test(field.value)) {
+        alert("I campi non possono contenere virgole o punti e virgola.");
+        event.preventDefault();
+        return false;
       }
     }
+    return true;
+  }
 
-    window.addEventListener('DOMContentLoaded', () => {
-      document.getElementById("ticketForm").addEventListener("submit", validateForm);
-      document.getElementById("categoria").addEventListener("change", handleCategoriaChange);
+  function handleCategoriaChange() {
+    const categoria = document.getElementById("categoria").value;
+    document.getElementById("numeroOrdineGroup").classList.add("hidden");
+    document.getElementById("numeroOrdine").required = false;
+    document.getElementById("codiceProdottoGroup").classList.add("hidden");
+    document.getElementById("codiceProdotto").required = false;
+
+    if (categoria === "Ordini e spedizioni") {
+      document.getElementById("numeroOrdineGroup").classList.remove("hidden");
+      document.getElementById("numeroOrdine").required = true;
+    } else if (categoria === "Supporto tecnico prodotto") {
+      document.getElementById("codiceProdottoGroup").classList.remove("hidden");
+      document.getElementById("codiceProdotto").required = true;
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    document.getElementById("ticketForm").addEventListener("submit", async function (event) {
+      if (!validateForm(event)) return;
+
+      event.preventDefault();
+
+      const form = event.target;
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      try {
+        const response = await fetch("/.netlify/functions/sendToGoogleSheet", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          alert("Richiesta inviata con successo.");
+          form.reset();
+          document.getElementById("numeroOrdineGroup").classList.add("hidden");
+          document.getElementById("codiceProdottoGroup").classList.add("hidden");
+        } else {
+          alert("Errore durante l'invio della richiesta.");
+        }
+      } catch (error) {
+        alert("Errore di rete: " + error.message);
+      }
     });
-	
-	document.getElementById("ticketForm").addEventListener("submit", function (event) {
-  event.preventDefault();
 
-  const form = event.target;
-  const data = new FormData(form);
-
-  fetch("https://script.google.com/macros/s/AKfycbxuEE5xjqq_PxJSJWJQ9UgXWtXSkih1g1YBzgEHoOuwnwb6Se6TxKujNRl5qMqGXhdS/exec", {
-    method: "POST",
-    body: data
-  })
-  .then(response => {
-    if (response.ok) {
-      alert("Richiesta inviata con successo.");
-      form.reset();
-      document.getElementById("numeroOrdineGroup").classList.add("hidden");
-      document.getElementById("codiceProdottoGroup").classList.add("hidden");
-    } else {
-      alert("Errore durante l'invio della richiesta.");
-    }
-  })
-  .catch(error => {
-    alert("Errore di rete: " + error.message);
+    document.getElementById("categoria").addEventListener("change", handleCategoriaChange);
   });
-});
-
-  </script>
+</script>
 </head>
 <body>
 
