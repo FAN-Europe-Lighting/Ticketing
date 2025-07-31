@@ -126,6 +126,14 @@
       event.preventDefault();
 
       const form = event.target;
+      const submitButton = form.querySelector("button[type='submit']");
+      const inputs = form.querySelectorAll("input, textarea, select, button");
+
+      // Disabilita invio multiplo
+      submitButton.disabled = true;
+      submitButton.textContent = "Invio in corso...";
+      inputs.forEach(input => input.disabled = true);
+
       const formData = new FormData(form);
       const data = Object.fromEntries(formData.entries());
 
@@ -148,6 +156,9 @@
         }
       } catch (error) {
         alert("Errore di rete: " + error.message);
+      } finally {
+        inputs.forEach(input => input.disabled = false);
+        submitButton.textContent = "Invia Richiesta / Send Request";
       }
     });
 
