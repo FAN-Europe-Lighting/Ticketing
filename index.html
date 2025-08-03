@@ -125,9 +125,14 @@
 
       event.preventDefault();
 
-      const form = event.target;
-      const formData = new FormData(form);
-      const data = Object.fromEntries(formData.entries());
+	const form = event.target;
+	const submitButton = form.querySelector("button[type='submit']");
+	submitButton.disabled = true;
+	submitButton.innerText = "Invio in corso..."; // opzionale, puoi rimuoverla se non vuoi il cambio testo
+	
+	const formData = new FormData(form);
+	const data = Object.fromEntries(formData.entries());
+
 
       try {
         const response = await fetch("/.netlify/functions/sendToGoogleSheet", {
